@@ -7,17 +7,16 @@ package unopoo;
 
 /**
  *
- * @author esteban
+ * @author Usuario
  */
-public class UnoPOO {
+public class PruebaManejaServidor {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        Servidor server = new Servidor();
-        server.arrancarServidor();
+        
     }
     
 }
