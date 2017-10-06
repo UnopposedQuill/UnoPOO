@@ -9,6 +9,6 @@ package unopoo;
  *
  * @author Usuario
  */
-public enum TipoMensaje implements java.io.Serializable{
-    SERVIDORACTIVO, UNIRSEAPARTIDA, LANZARCARTA, CARTALANZADA, REGISTRARSE, PARTIDAGANADA, PARTIDAFINALIZADA;
+public enum ColorCarta {
+    ROJO, VERDE, AZUL, AMARILLO;
 }

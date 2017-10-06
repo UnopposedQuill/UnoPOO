@@ -6,6 +6,7 @@
 package unopoo;
 
 import java.io.*;
+import java.util.*;
 import java.net.*;
 import java.util.logging.*;
 
@@ -17,12 +18,14 @@ public class Servidor extends Thread{
     private boolean activo, pausado, atendiendo;
     private ServerSocket socketAtendedor;
     //Inserte base de datos, aquí debajo
+    private Partida partida;
 
     public Servidor() {
         super();
         this.activo = false;
         this.pausado = false;
         this.atendiendo = false;
+        this.partida = new Partida();
     }
     
     public void arrancarServidor(){
@@ -71,6 +74,35 @@ public class Servidor extends Thread{
                     mensajeRecibido.setDatoRespuesta(true);
                     salidaObjetos.writeObject(mensajeRecibido);
                     break;
+                }
+                case UNIRSEAPARTIDA:{
+                    if(this.partida.isPartidaIniciada()){
+                       mensajeRecibido.setDatoRespuesta(false);                       
+                    }else{
+                       ArrayList<String>datos = (ArrayList<String>)mensajeRecibido.getDatoSolicitud();
+                       if(this.partida.getJugadores().contains(new Jugador(Integer.parseInt(datos.get(1))))){
+                           mensajeRecibido.setDatoRespuesta(false);
+                       }
+                       else{
+                           
+                       }
+                    }
+                    salidaObjetos.writeObject(mensajeRecibido);
+                }
+                case LANZARCARTA:{//un usuario intentó lanzar una carta, debo validar que pueda hacerlo
+                    
+                }
+                case CARTALANZADA:{//un usuario lanzó una carta válida, notificar a todos
+                    
+                }
+                case PARTIDAFINALIZADA:{//la partida fue finalizada abruptamente, notificar a todos
+                    
+                }
+                case PARTIDAGANADA:{//la partida fue ganada por alguien, notificar a todos
+                    
+                }
+                case REGISTRARSE:{//no se sabe si se seguirá usando
+                    
                 }
                 default:{
                     break;
