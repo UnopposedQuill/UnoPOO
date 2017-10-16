@@ -42,6 +42,6 @@ public class CartaTomeDos extends CartaColor{
 
     @Override
     public String toString() {
-        return "Carta de Tome Dos " + this.getColor();
+        return "Tome Dos " + this.getColor();
     }
 }

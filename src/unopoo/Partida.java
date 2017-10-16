@@ -13,13 +13,15 @@ import java.util.*;
 public class Partida {
     private int turno;
     private boolean partidaIniciada, sentido;
+    private ArrayList<Carta> cartas;
     private ArrayList<Jugador> jugadores;
 
     public Partida() {
         this.partidaIniciada = false;
         this.sentido = true;//true es hacia la "derecha"
-        this.turno = -1;
-        this.jugadores = new ArrayList<Jugador>();
+        this.turno = 0;
+        this.jugadores = new ArrayList<>();
+        this.cartas = new ArrayList<>();
     }
 
     public int getTurno() {
@@ -37,13 +39,24 @@ public class Partida {
     public ArrayList<Jugador> getJugadores() {
         return jugadores;
     }
+
+    public ArrayList<Carta> getCartas() {
+        return cartas;
+    }
+
+    public void setTurno(int turno) {
+        this.turno = turno;
+    }
+
+    public void setPartidaIniciada(boolean partidaIniciada) {
+        this.partidaIniciada = partidaIniciada;
+    }
+
+    public void setSentido(boolean sentido) {
+        this.sentido = sentido;
+    }
     
     public Jugador getJugador(int i){
-        if(i >= 0){
-            return this.jugadores.get(i);
-        }
-        else{
-            return this.jugadores.get(this.jugadores.size()+i);
-        }
+        return this.jugadores.get(i);
     }
 }

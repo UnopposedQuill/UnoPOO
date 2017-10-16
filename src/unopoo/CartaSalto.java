@@ -42,6 +42,6 @@ public class CartaSalto extends CartaColor{
 
     @Override
     public String toString() {
-        return "Carta de Salto " + this.getColor();
+        return "Salto " + this.getColor();
     }
 }

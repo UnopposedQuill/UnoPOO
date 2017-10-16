@@ -54,7 +54,7 @@ public class CartaNumero extends CartaColor{
 
     @Override
     public String toString() {
-        return "Carta de Numero: " + numeroCarta + " color: " + this.getColor();
+        return numeroCarta + " " + this.getColor();
     }
     
     

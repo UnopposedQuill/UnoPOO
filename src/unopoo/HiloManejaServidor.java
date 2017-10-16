@@ -28,13 +28,16 @@ public class HiloManejaServidor extends Thread{
             System.out.println("¿Qué deseas que haga?");
             try{
                 int enteroRecibido = System.in.read()-48;
+                if(enteroRecibido == -38){
+                    enteroRecibido = System.in.read()-48;
+                }
                 switch(enteroRecibido){
                     case 1:{//Cómo está todo
                         System.out.println(this.servidorPropio.isActivo());
                         break;
                     }
                     case 2:{//Encendido/Apagado del servidor
-                        this.servidorPropio.setActivo(this.servidorPropio.isActivo());
+                        this.servidorPropio.setActivo(!this.servidorPropio.isActivo());
                         System.out.print("El servidor terminó:" );
                         if(this.servidorPropio.isActivo()){
                             System.out.println("Activo");
@@ -45,6 +48,7 @@ public class HiloManejaServidor extends Thread{
                             this.servidorPropio.setPausado(false);
                             System.out.println("Inactivo");
                         }
+                        break;
                     }
                     case 3:{//Pausado/Despausado del servidor
                         this.servidorPropio.setPausado(this.servidorPropio.isPausado());
@@ -54,6 +58,7 @@ public class HiloManejaServidor extends Thread{
                         }else{
                             System.out.println("Despausado");
                         }
+                        break;
                     }
                     case 8:{
                         this.servidorPropio.setActivo(false);
@@ -66,7 +71,8 @@ public class HiloManejaServidor extends Thread{
                         break;
                     }
                 }
-            }catch(IOException exc){
+                sleep(2);
+            }catch(IOException|InterruptedException exc){
                 Logger.getLogger("HiloManejaServidor.java").log(Level.SEVERE, null, exc);
             }
         }

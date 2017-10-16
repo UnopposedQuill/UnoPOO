@@ -56,10 +56,16 @@ public class Servidor extends Thread{
 
     @Override
     public void run() {
+        try {
+            this.socketAtendedor = new ServerSocket(15000);
+        } catch (IOException ex) {
+            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+            this.activo = false;
+        }
         while(this.activo){
             //en este espacio se atenderán las peticiones entrantes
             try{
-            this.socketAtendedor = new ServerSocket(15000);
+            
             Socket socketAtendido = this.socketAtendedor.accept();
             
             this.atendiendo = false;
@@ -77,32 +83,111 @@ public class Servidor extends Thread{
                 }
                 case UNIRSEAPARTIDA:{
                     if(this.partida.isPartidaIniciada()){
-                       mensajeRecibido.setDatoRespuesta(false);                       
+                       mensajeRecibido.setDatoRespuesta(false);
                     }else{
-                       ArrayList<String>datos = (ArrayList<String>)mensajeRecibido.getDatoSolicitud();
-                       if(this.partida.getJugadores().contains(new Jugador(Integer.parseInt(datos.get(1))))){
+                       if(this.partida.getJugadores().contains(new Jugador((String)mensajeRecibido.getDatoSolicitud()))){
                            mensajeRecibido.setDatoRespuesta(false);
                        }
                        else{
-                           
+                           this.partida.getJugadores().add(new Jugador((String)mensajeRecibido.getDatoSolicitud(), socketAtendido.getInetAddress().toString().substring(1)));
+                           System.out.println(socketAtendido.getInetAddress().toString().substring(1));
+                           mensajeRecibido.setDatoRespuesta(true);
                        }
                     }
                     salidaObjetos.writeObject(mensajeRecibido);
+                    break;
                 }
                 case LANZARCARTA:{//un usuario intentó lanzar una carta, debo validar que pueda hacerlo
-                    
+                    ArrayList<Object> datos = (ArrayList<Object>)mensajeRecibido.getDatoSolicitud();
+                    Carta cartaLanzada = (Carta)datos.get(0);
+                    if(cartaLanzada.isLanzable(this.partida.getCartas().get(this.partida.getCartas().size()-1))){
+                        Jugador jugador = new Jugador((String)datos.get(1));
+                        if(this.partida.getJugador(this.partida.getTurno()).equals(jugador)){
+                            mensajeRecibido.setDatoRespuesta(true);
+                            for (int i = 0; i < this.partida.getJugadores().size(); i++) {
+                                Jugador get = this.partida.getJugadores().get(i);
+                                if(get.equals(jugador)){
+                                    get.getCartas().remove(cartaLanzada);
+                                    break;
+                                }
+                            }
+                            if(this.partida.isSentido()){
+                                this.partida.setTurno(this.partida.getTurno()+ 1);
+                            }
+                            else{
+                                this.partida.setTurno(this.partida.getTurno()- 1);
+                            }
+                            if(this.partida.getTurno() >= this.partida.getJugadores().size()){
+                                this.partida.setTurno(0);
+                            }
+                            if(this.partida.getTurno() < 0){
+                                this.partida.setTurno(this.partida.getJugadores().size()-1);
+                            }
+                            if(cartaLanzada instanceof CartaReversa){
+                                this.partida.setSentido(!this.partida.isSentido());
+                            }
+                            else if(cartaLanzada instanceof CartaSalto){
+                                if(this.partida.isSentido()){
+                                    this.partida.setTurno(this.partida.getTurno()+ 1);
+                                }
+                                else{
+                                    this.partida.setTurno(this.partida.getTurno()- 1);
+                                }
+                            }
+                            else if(cartaLanzada instanceof CartaTomeDos){
+                                Jugador j = this.partida.getJugador(this.partida.getTurno());
+                                for (int i = 0; i < 2; i++) {
+                                    j.getCartas().add(GeneradorDeCartas.generarCarta());
+                                }
+                            }
+                            else if(cartaLanzada instanceof CartaSinColor){
+                                if(!((CartaSinColor) cartaLanzada).isTipoDeCarta()){
+                                    Jugador j = this.partida.getJugador(this.partida.getTurno());
+                                    for (int i = 0; i < 4; i++) {
+                                        j.getCartas().add(GeneradorDeCartas.generarCarta());
+                                    }
+                                }
+                                ColorCarta colorDeseado = (ColorCarta)datos.get(2);
+                                ((CartaSinColor) cartaLanzada).setColorDeseado(colorDeseado);
+                            }
+                            this.partida.getCartas().add(cartaLanzada);
+                        }
+                    }else{
+                        mensajeRecibido.setDatoRespuesta(false);
+                    }
+                    salidaObjetos.writeObject(mensajeRecibido);
+                    break;
                 }
-                case CARTALANZADA:{//un usuario lanzó una carta válida, notificar a todos
-                    
+                case INICIARPARTIDA:{
+                    if(!this.partida.isPartidaIniciada()){
+                        this.partida.getCartas().add(GeneradorDeCartas.generarCarta());
+                        for (int i = 0; i < this.partida.getJugadores().size(); i++) {
+                            Jugador get = this.partida.getJugadores().get(i);
+                            for (int j = 0; j < 7; j++) {
+                                get.getCartas().add(GeneradorDeCartas.generarCarta());
+                            }
+                        }
+                        this.partida.setPartidaIniciada(true);
+                    }
+                    mensajeRecibido.setDatoRespuesta(true);
+                    salidaObjetos.writeObject(mensajeRecibido);
+                    break;
                 }
-                case PARTIDAFINALIZADA:{//la partida fue finalizada abruptamente, notificar a todos
-                    
+                case PEDIRCARTA:{
+                    String nombreJugador = (String)mensajeRecibido.getDatoSolicitud();
+                    this.partida.getJugadores().get(this.partida.getJugadores().indexOf(new Jugador(nombreJugador))).getCartas().add(GeneradorDeCartas.generarCarta());
+                    mensajeRecibido.setDatoRespuesta(true);
+                    salidaObjetos.writeObject(mensajeRecibido);
+                    break;
                 }
-                case PARTIDAGANADA:{//la partida fue ganada por alguien, notificar a todos
-                    
-                }
-                case REGISTRARSE:{//no se sabe si se seguirá usando
-                    
+                case ACTUALIZARDATOS:{
+                    ArrayList<Object> datosAEnviar = new ArrayList<>();
+                    datosAEnviar.add(this.partida.getJugadores());
+                    datosAEnviar.add(this.partida.getCartas().get(this.partida.getCartas().size()-1));
+                    datosAEnviar.add(this.partida.getJugador(this.partida.getTurno()));
+                    mensajeRecibido.setDatoRespuesta(datosAEnviar);
+                    salidaObjetos.writeObject(mensajeRecibido);
+                    break;
                 }
                 default:{
                     break;

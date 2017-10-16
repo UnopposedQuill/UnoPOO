@@ -9,14 +9,15 @@ package unopoo;
  *
  * @author Usuario
  */
-public class PruebaManejaServidor {
+public class MainServidor {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        
+        HiloManejaServidor hiloManejador = new HiloManejaServidor();
+        hiloManejador.start();
     }
     
 }

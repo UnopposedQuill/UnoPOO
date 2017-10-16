@@ -12,30 +12,41 @@ import java.util.*;
  *
  * @author Usuario
  */
-public class Jugador {
+public class Jugador implements java.io.Serializable{
     
     private String nombreJugador;
-    private int IDJugador;
+    //private int IDJugador;
     private String IP;
-    private int numeroJugador;
     private ArrayList<Carta> cartas;
     
-    public Jugador(String nombreJugador, int IDJugador, String IP, int numeroJugador) {
+    public Jugador(String nombreJugador, String IP) {
         this.nombreJugador = nombreJugador;
-        this.IDJugador = IDJugador;
+        //this.IDJugador = IDJugador;
         this.IP = IP;
-        this.numeroJugador = numeroJugador;
         this.cartas = new ArrayList<>();
     }
 
-    public Jugador(int ID){
-        this.IDJugador = ID;
+    public Jugador(String nombre){
+        this.nombreJugador = nombre;
+        //this.IDJugador = ID;
+    }
+
+    public String getNombreJugador() {
+        return nombreJugador;
+    }
+
+    public String getIP() {
+        return IP;
+    }
+
+    public ArrayList<Carta> getCartas() {
+        return cartas;
     }
     
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + this.IDJugador;
+        int hash = 5;
+        hash = 37 * hash + Objects.hashCode(this.nombreJugador);
         return hash;
     }
 
@@ -51,7 +62,7 @@ public class Jugador {
             return false;
         }
         final Jugador other = (Jugador) obj;
-        return this.IDJugador == other.IDJugador;
+        return Objects.equals(this.nombreJugador, other.nombreJugador);
     }
     
 }

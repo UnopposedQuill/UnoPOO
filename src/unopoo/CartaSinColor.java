@@ -40,9 +40,9 @@ public class CartaSinColor extends Carta{
     @Override
     public String toString() {
         if(this.tipoDeCarta){
-            return "Comodín con color: " + colorDeseado;
+            return "Comodín " + colorDeseado;
         }
-        return "Tome 4 con color: " + colorDeseado;
+        return "Tome 4 " + colorDeseado;
     }
     
     

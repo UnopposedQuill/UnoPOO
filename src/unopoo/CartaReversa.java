@@ -42,6 +42,6 @@ public class CartaReversa extends CartaColor{
 
     @Override
     public String toString() {
-        return "Carta de Reversa " + this.getColor();
+        return "Reversa " + this.getColor();
     }
 }
