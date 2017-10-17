@@ -89,7 +89,7 @@ public class Servidor extends Thread{
                            mensajeRecibido.setDatoRespuesta(false);
                        }
                        else{
-                           this.partida.getJugadores().add(new Jugador((String)mensajeRecibido.getDatoSolicitud(), socketAtendido.getInetAddress().toString().substring(1)));
+                           this.partida.getJugadores().add(new Jugador((String)mensajeRecibido.getDatoSolicitud()));
                            System.out.println(socketAtendido.getInetAddress().toString().substring(1));
                            mensajeRecibido.setDatoRespuesta(true);
                        }
@@ -133,12 +133,19 @@ public class Servidor extends Thread{
                                 else{
                                     this.partida.setTurno(this.partida.getTurno()- 1);
                                 }
+                                if(this.partida.getTurno() >= this.partida.getJugadores().size()){
+                                    this.partida.setTurno(0);
+                                }
+                                if(this.partida.getTurno() < 0){
+                                    this.partida.setTurno(this.partida.getJugadores().size()-1);
+                                }
                             }
                             else if(cartaLanzada instanceof CartaTomeDos){
                                 Jugador j = this.partida.getJugador(this.partida.getTurno());
                                 for (int i = 0; i < 2; i++) {
                                     j.getCartas().add(GeneradorDeCartas.generarCarta());
                                 }
+                                j.setaSalvo(false);
                             }
                             else if(cartaLanzada instanceof CartaSinColor){
                                 if(!((CartaSinColor) cartaLanzada).isTipoDeCarta()){
@@ -146,6 +153,7 @@ public class Servidor extends Thread{
                                     for (int i = 0; i < 4; i++) {
                                         j.getCartas().add(GeneradorDeCartas.generarCarta());
                                     }
+                                    j.setaSalvo(false);
                                 }
                                 ColorCarta colorDeseado = (ColorCarta)datos.get(2);
                                 ((CartaSinColor) cartaLanzada).setColorDeseado(colorDeseado);
@@ -176,6 +184,7 @@ public class Servidor extends Thread{
                 case PEDIRCARTA:{
                     String nombreJugador = (String)mensajeRecibido.getDatoSolicitud();
                     this.partida.getJugadores().get(this.partida.getJugadores().indexOf(new Jugador(nombreJugador))).getCartas().add(GeneradorDeCartas.generarCarta());
+                    this.partida.getJugadores().get(this.partida.getJugadores().indexOf(new Jugador(nombreJugador))).setaSalvo(false);
                     mensajeRecibido.setDatoRespuesta(true);
                     salidaObjetos.writeObject(mensajeRecibido);
                     break;
@@ -188,6 +197,26 @@ public class Servidor extends Thread{
                     mensajeRecibido.setDatoRespuesta(datosAEnviar);
                     salidaObjetos.writeObject(mensajeRecibido);
                     break;
+                }
+                case UNO:{
+                    String []nombres = (String[])mensajeRecibido.getDatoSolicitud();
+                    Jugador jugadorSeñalador = this.partida.getJugadores().get(this.partida.getJugadores().indexOf(new Jugador(nombres[0])));
+                    Jugador jugadorSeñalado = this.partida.getJugadores().get(this.partida.getJugadores().indexOf(new Jugador(nombres[1])));
+                    if(!jugadorSeñalado.isaSalvo() && jugadorSeñalado.getCartas().size() == 1 && jugadorSeñalado.equals(jugadorSeñalador)){
+                        jugadorSeñalado.setaSalvo(true);
+                        mensajeRecibido.setDatoRespuesta(true);
+                        salidaObjetos.writeObject(mensajeRecibido);
+                    }
+                    else if(jugadorSeñalado.getCartas().size() != 1){
+                        jugadorSeñalador.getCartas().add(GeneradorDeCartas.generarCarta());
+                        jugadorSeñalador.getCartas().add(GeneradorDeCartas.generarCarta());
+                        mensajeRecibido.setDatoRespuesta(false);
+                        salidaObjetos.writeObject(mensajeRecibido);
+                    }
+                    else if(jugadorSeñalado.isaSalvo()){
+                        mensajeRecibido.setDatoRespuesta(false);
+                        salidaObjetos.writeObject(mensajeRecibido);
+                    }
                 }
                 default:{
                     break;

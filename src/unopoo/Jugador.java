@@ -16,31 +16,29 @@ public class Jugador implements java.io.Serializable{
     
     private String nombreJugador;
     //private int IDJugador;
-    private String IP;
     private ArrayList<Carta> cartas;
+    private boolean aSalvo = false;
     
-    public Jugador(String nombreJugador, String IP) {
+    public Jugador(String nombreJugador) {
         this.nombreJugador = nombreJugador;
         //this.IDJugador = IDJugador;
-        this.IP = IP;
         this.cartas = new ArrayList<>();
-    }
-
-    public Jugador(String nombre){
-        this.nombreJugador = nombre;
-        //this.IDJugador = ID;
     }
 
     public String getNombreJugador() {
         return nombreJugador;
     }
-
-    public String getIP() {
-        return IP;
-    }
-
+    
     public ArrayList<Carta> getCartas() {
         return cartas;
+    }
+
+    public boolean isaSalvo() {
+        return aSalvo;
+    }
+
+    public void setaSalvo(boolean aSalvo) {
+        this.aSalvo = aSalvo;
     }
     
     @Override

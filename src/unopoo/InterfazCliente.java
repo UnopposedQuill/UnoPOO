@@ -53,9 +53,23 @@ public class InterfazCliente extends javax.swing.JFrame {
             if(getJugador.equals(this.jugador)){
                 this.jugador = getJugador;
                 String [] nombres = {"", "", "", "", ""};
-                for (int j = 0; j+indiceCartaActual < Integer.min(getJugador.getCartas().size(), 5); j++) {
-                        nombres[j] = getJugador.getCartas().get(j+indiceCartaActual).toString();
+                ImageIcon [] imagenes = new ImageIcon[5];
+                for (int j = 0; j < Integer.min(this.jugador.getCartas().size(), 5); j++) {
+                        nombres[j] = this.jugador.getCartas().get(j+indiceCartaActual).toString();
+                        /*
+                        if(!nombres[j].equals("")){
+                            imagenes[j] = new ImageIcon("/resources/".concat(nombres[j]).concat(".png"));
+                            System.out.println(imagenes[j].getIconWidth()+ "X" + imagenes[j].getIconHeight());
+                        }
+                        */
                 }
+                /*
+                this.carta1.setIcon(imagenes[0]);
+                this.carta2.setIcon(imagenes[1]);
+                this.carta3.setIcon(imagenes[2]);
+                this.carta4.setIcon(imagenes[3]);
+                this.carta5.setIcon(imagenes[4]);
+                */
                 this.carta1.setText(nombres[0]);
                 this.carta2.setText(nombres[1]);
                 this.carta3.setText(nombres[2]);
@@ -64,6 +78,23 @@ public class InterfazCliente extends javax.swing.JFrame {
             }
             else{//hacer un conteo de las cartas de los demás jugadores, eso le toca a usted
                 
+            }
+            for (int j = 0; j < jugadores.size(); j++) {
+                Jugador get = jugadores.get(j);
+                if(get.getCartas().isEmpty()){
+                    JOptionPane.showMessageDialog(null, "El jugador "+get.getNombreJugador()+" ha ganado la partida");
+                    System.exit(0);
+                }
+                if(get.getCartas().size() == 1 && !get.isaSalvo()){
+                    JOptionPane.showMessageDialog(null, "UNO", "UNO", JOptionPane.INFORMATION_MESSAGE);
+                    String [] nombres = {this.jugador.getNombreJugador(),get.getNombreJugador()};
+                    if(this.cliente.uno(nombres)){
+                        JOptionPane.showConfirmDialog(null, "UNO exitoso", "UNO", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    else{
+                        JOptionPane.showConfirmDialog(null, "UNO fallido", "UNO", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
             }
         }
     }
@@ -389,9 +420,24 @@ public class InterfazCliente extends javax.swing.JFrame {
         if(this.indiceCartaActual < this.jugador.getCartas().size()-1){
             this.indiceCartaActual += 1;
             String [] nombres = {"", "", "", "", ""};
-            for (int j = 0; j < Integer.min(this.jugador.getCartas().size(), 5); j++) {
-                    nombres[j] = this.jugador.getCartas().get(j+indiceCartaActual).toString();
+            //ImageIcon [] imagenes = new ImageIcon[5];
+            for (int j = 0; j < Integer.min(this.jugador.getCartas().size(), 5) && j+indiceCartaActual < this.jugador.getCartas().size(); j++) {
+                
+                nombres[j] = this.jugador.getCartas().get(j+indiceCartaActual).toString();
+                /*
+                if(!nombres[j].equals("")){
+                    imagenes[j] = new ImageIcon("/resources/".concat(nombres[j]).concat(".png"));
+                    System.out.println(imagenes[j].getIconWidth()+ "X" + imagenes[j].getIconHeight());
+                }
+                */
             }
+            /*
+            this.carta1.setIcon(imagenes[0]);
+            this.carta2.setIcon(imagenes[1]);
+            this.carta3.setIcon(imagenes[2]);
+            this.carta4.setIcon(imagenes[3]);
+            this.carta5.setIcon(imagenes[4]);
+            */
             this.carta1.setText(nombres[0]);
             this.carta2.setText(nombres[1]);
             this.carta3.setText(nombres[2]);
@@ -405,9 +451,23 @@ public class InterfazCliente extends javax.swing.JFrame {
         if(this.indiceCartaActual > 0){
             this.indiceCartaActual -= 1;
             String [] nombres = {"", "", "", "", ""};
+            //ImageIcon [] imagenes = new ImageIcon[5];
             for (int j = 0; j < Integer.min(this.jugador.getCartas().size(), 5); j++) {
                     nombres[j] = this.jugador.getCartas().get(j+indiceCartaActual).toString();
+                    /*
+                    if(!nombres[j].equals("")){
+                        imagenes[j] = new ImageIcon("/resources/".concat(nombres[j]).concat(".png"));
+                        System.out.println(imagenes[j].getIconWidth()+ "X" + imagenes[j].getIconHeight());
+                    }
+                    */
             }
+            /*
+            this.carta1.setIcon(imagenes[0]);
+            this.carta2.setIcon(imagenes[1]);
+            this.carta3.setIcon(imagenes[2]);
+            this.carta4.setIcon(imagenes[3]);
+            this.carta5.setIcon(imagenes[4]);
+            */
             this.carta1.setText(nombres[0]);
             this.carta2.setText(nombres[1]);
             this.carta3.setText(nombres[2]);
@@ -415,7 +475,7 @@ public class InterfazCliente extends javax.swing.JFrame {
             this.carta5.setText(nombres[4]);
         }
     }//GEN-LAST:event_IzquierdoActionPerformed
-
+ 
     /**
      * @param args the command line arguments
      */

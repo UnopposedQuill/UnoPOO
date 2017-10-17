@@ -164,4 +164,26 @@ public class Cliente{
             return false;
         }
     }
+    
+    public boolean uno(String [] nombres){
+        Mensaje mensajeAEnviar = new Mensaje(nombres, TipoMensaje.INICIARPARTIDA);
+        try{
+            Socket socket = new Socket(IPServidor, 15000);//2048->??MIL
+            
+            InputStream entrada = socket.getInputStream();
+            ObjectInputStream entradaObjetos = new ObjectInputStream(entrada);
+            OutputStream salida = socket.getOutputStream();
+            ObjectOutputStream salidaObjetos = new ObjectOutputStream(salida);
+            
+            salidaObjetos.writeObject(mensajeAEnviar);            
+            Mensaje mensajeRecibido = (Mensaje)entradaObjetos.readObject();
+            entradaObjetos.close();
+            salidaObjetos.close();
+            socket.close();
+            return (boolean)mensajeRecibido.getDatoRespuesta();
+        }catch(IOException|ClassNotFoundException exc){
+            Logger.getLogger("Cliente.java").log(Level.SEVERE, null, exc);
+            return false;
+        }
+    }
 }
